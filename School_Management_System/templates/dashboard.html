@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>School Management Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="sidebar">
+        <h2>🎓 School System</h2>
+
+        <a href="/dashboard" class="active">Dashboard</a>
+        <a href="/students">Students</a>
+        <a href="/teachers">Teachers</a>
+        <a href="/classes">Classes</a>
+        <a href="/timetable">Timetable Management</a>
+        <a href="/attendance">Attendance</a>
+        <a href="/attendance_report">Attendance Report</a>
+        <a href="/fees">Fee Management</a>
+        <a href="/exams">Examination Management</a>
+        <a href="{{ url_for('reports.reports') }}">Reports</a>
+    </div>
+
+    <div class="main">
+
+        <div class="header">
+            <div>
+                <h1>Admin Dashboard</h1>
+                <p>Welcome back, Administrator!</p>
+            </div>
+
+            <a href="/logout" class="logout">Logout</a>
+        </div>
+
+        <div class="cards">
+
+            <div class="card">
+                <h3>Total Students</h3>
+                <h2>{{ total_students }}</h2>
+            </div>
+
+            <div class="card">
+                <h3>Total Teachers</h3>
+                <h2>{{ total_teachers }}</h2>
+            </div>
+
+            <div class="card">
+                <h3>Total Classes</h3>
+                <h2>{{ total_classes }}</h2>
+            </div>
+
+            <div class="card">
+                <h3>Attendance</h3>
+                <h2>--</h2>
+            </div>
+
+        </div>
+
+        <div class="welcome">
+            <h2>Welcome to School Management System!</h2>
+
+            <p>
+                Manage your school activities from one place.
+                You can manage students, teachers, classes,
+                timetables, attendance, fees and examinations.
+            </p>
+
+            <br>
+
+            <a href="/students">Manage Students</a>
+            <a href="/teachers">Manage Teachers</a>
+            <a href="/classes">Manage Classes</a>
+            <a href="/timetable">Manage Timetable</a>
+            <a href="/attendance">Manage Attendance</a>
+            <a href="/fees">Manage Fees</a>
+            <a href="/exams">Examination Management</a>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Teacher</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="main">
+
+    <div class="header">
+        <h1>Teacher Registration</h1>
+        <a href="/teachers">Back to Teachers</a>
+    </div>
+
+    <div class="welcome">
+        <form method="POST">
+
+            <h2>Account Information</h2>
+
+            <label>Username</label><br>
+            <input type="text" name="username" required>
+            <br><br>
+
+            <label>Email</label><br>
+            <input type="email" name="email">
+            <br><br>
+
+            <label>Password</label><br>
+            <input type="password" name="password" required>
+            <br><br>
+
+            <h2>Personal Information</h2>
+
+            <label>Full Name</label><br>
+            <input type="text" name="name" required>
+            <br><br>
+
+            <label>Phone</label><br>
+            <input type="text" name="phone">
+            <br><br>
+
+            <label>Address</label><br>
+            <input type="text" name="address">
+            <br><br>
+
+            <h2>Professional Information</h2>
+
+            <label>Qualification</label><br>
+            <input type="text" name="qualification" required>
+            <br><br>
+
+            <label>Joining Date</label><br>
+            <input type="date" name="joining_date">
+            <br><br>
+
+            <button type="submit">Register Teacher</button>
+
+        </form>
+    </div>
+
+</div>
+
+</body>
+</html>

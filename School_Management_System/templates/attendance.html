@@ -1,0 +1,206 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Attendance Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            padding: 25px;
+        }
+
+        .container {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        h2 {
+            color: #26344a;
+        }
+
+        select, input {
+            padding: 9px;
+            margin: 8px 5px 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 5px;
+            background: #198754;
+            color: white;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #26344a;
+            color: white;
+        }
+
+        .back {
+            display: inline-block;
+            margin-top: 20px;
+            color: #26344a;
+            text-decoration: none;
+        }
+
+        .save-btn {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>Attendance Management</h2>
+
+    <!-- SELECT CLASS AND SECTION -->
+    <form method="GET" action="{{ url_for('attendance') }}">
+
+        <label>Select Class:</label>
+
+        <select name="class_id" required>
+            <option value="">Choose Class</option>
+
+            {% for c in classes %}
+            <option value="{{ c.class_id }}"
+                {% if selected_class|string == c.class_id|string %}selected{% endif %}>
+                {{ c.class_name }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <label>Select Section:</label>
+
+        <select name="section_id" required>
+            <option value="">Choose Section</option>
+
+            {% for sec in sections %}
+            <option value="{{ sec.section_id }}"
+                {% if selected_section|string == sec.section_id|string %}selected{% endif %}>
+                {{ sec.section_name }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <label>Date:</label>
+
+        <input type="date"
+               name="attendance_date"
+               value="{{ attendance_date }}"
+               required>
+
+        <button type="submit">Load Students</button>
+
+    </form>
+
+
+    <!-- STUDENT ATTENDANCE LIST -->
+    {% if selected_class and selected_section %}
+
+        <h3>Student Attendance List</h3>
+
+        {% if students %}
+
+        <form method="POST" action="{{ url_for('attendance') }}">
+
+            <input type="hidden" name="class_id" value="{{ selected_class }}">
+            <input type="hidden" name="section_id" value="{{ selected_section }}">
+            <input type="hidden" name="attendance_date" value="{{ attendance_date }}">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Admission Number</th>
+                        <th>Student Name</th>
+                        <th>Attendance Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for student in students %}
+
+                    <tr>
+                        <td>{{ student.student_id }}</td>
+
+                        <td>{{ student.admission_number or 'N/A' }}</td>
+
+                        <td>{{ student.full_name or 'N/A' }}</td>
+
+                        <td>
+                            <select name="status_{{ student.student_id }}" required>
+
+                                {% for item in attendance_types %}
+
+                                <option value="{{ item.type_name }}"
+                                    {% if student.old_status == item.type_name %}selected{% endif %}>
+                                    {{ item.type_name }}
+                                </option>
+
+                                {% endfor %}
+
+                            </select>
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+            <button type="submit" class="save-btn">
+                Save Attendance
+            </button>
+
+        </form>
+
+        {% else %}
+
+            <p>No active students found in this class and section.</p>
+
+        {% endif %}
+
+    {% endif %}
+
+    <br>
+
+    <a href="{{ url_for('attendance_report') }}" class="back">
+        View Attendance Report
+    </a>
+
+    <br>
+
+    <a href="{{ url_for('dashboard') }}" class="back">
+        Back to Dashboard
+    </a>
+
+</div>
+
+</body>
+</html>

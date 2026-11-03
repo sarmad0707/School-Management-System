@@ -1,0 +1,199 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fee Management</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 25px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        h1 {
+            color: #243447;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #ddd;
+        }
+
+        input, select {
+            padding: 10px;
+            margin: 8px 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            padding: 11px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #243447;
+            color: white;
+        }
+
+        .back {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .message {
+            padding: 10px;
+            background: #e8f5e9;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <a class="back" href="{{ url_for('dashboard') }}">
+        ← Back to Dashboard
+    </a>
+
+    <h1>Fee Management</h1>
+
+    {% with messages = get_flashed_messages() %}
+        {% for message in messages %}
+            <div class="message">{{ message }}</div>
+        {% endfor %}
+    {% endwith %}
+
+    <div class="card">
+        <h2>Assign Student Fee</h2>
+
+        <form method="POST" action="{{ url_for('assign_fee') }}">
+
+            <label>Select Student</label>
+            <select name="student_id" required>
+                <option value="">Choose Student</option>
+                {% for student in students %}
+                    <option value="{{ student.student_id }}">
+                        {{ student.full_name }}
+                        - {{ student.admission_number }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <label>Select Fee</label>
+            <select name="fee_structure_id" required>
+                <option value="">Choose Fee</option>
+                {% for fee in fee_structures %}
+                    <option value="{{ fee.fee_structure_id }}">
+                        {{ fee.class_name }} -
+                        {{ fee.fee_name }} -
+                        Rs. {{ fee.amount }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <label>Due Date</label>
+            <input type="date" name="due_date" required>
+
+            <button type="submit">Assign Fee</button>
+
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Fee Records</h2>
+
+        <table>
+            <tr>
+                <th>Student</th>
+                <th>Class</th>
+                <th>Total Fee</th>
+                <th>Paid</th>
+                <th>Balance</th>
+                <th>Status</th>
+            </tr>
+
+            {% for fee in fee_records %}
+            <tr>
+                <td>{{ fee.full_name }}</td>
+                <td>{{ fee.class_name }}</td>
+                <td>Rs. {{ fee.total_fee }}</td>
+                <td>Rs. {{ fee.paid_amount }}</td>
+                <td>Rs. {{ fee.balance }}</td>
+                <td>{{ fee.status }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="card">
+        <h2>Receive Fee Payment</h2>
+
+        <form method="POST" action="{{ url_for('record_payment') }}">
+
+            <label>Student Fee ID</label>
+            <input
+                type="number"
+                name="student_fee_id"
+                placeholder="Enter Student Fee ID"
+                required
+                min="1"
+            >
+
+            <label>Payment Amount (PKR)</label>
+            <input
+                type="number"
+                name="amount_paid"
+                placeholder="Enter Amount"
+                required
+                min="1"
+                step="0.01"
+            >
+
+            <label>Payment Date</label>
+            <input type="date" name="payment_date" required>
+
+            <label>Payment Method</label>
+            <select name="payment_method" required>
+                <option value="Cash">Cash</option>
+                <option value="Bank Transfer">Bank Transfer</option>
+                <option value="Online">Online</option>
+            </select>
+
+            <button type="submit">Receive Payment</button>
+
+        </form>
+    </div>
+
+</div>
+
+</body>
+</html>

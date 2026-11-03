@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Examination Management</title>
+    <style>
+        body { font-family: Arial; background: #f4f6f9; margin: 0; padding: 30px; }
+        .container { max-width: 1000px; margin: auto; }
+        .card { background: white; padding: 20px; margin: 15px 0; border-radius: 8px; }
+        h1, h2 { color: #243b55; }
+        a { display: inline-block; background: #2471a3; color: white; padding: 10px 15px; margin: 5px; text-decoration: none; border-radius: 5px; }
+        .back { background: #555; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <h1>Examination Management</h1>
+    <a class="back" href="/dashboard">Back to Dashboard</a>
+    <a href="/marks_entry">Marks Entry</a>
+
+    {% for exam in exams %}
+    <div class="card">
+        <h2>{{ exam.exam_name }}</h2>
+        <p><strong>Exam Date:</strong> {{ exam.exam_date }}</p>
+        <p><strong>Academic Year:</strong> {{ exam.year_name or 'N/A' }}</p>
+
+        <h3>Select Class</h3>
+
+        {% for class_item in classes %}
+        <a href="{{ url_for('marks_entry', exam_id=exam.exam_id, class_id=class_item.class_id) }}">
+            {{ class_item.class_name }}
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>No exams found.</p>
+    {% endfor %}
+
+</div>
+</body>
+</html>

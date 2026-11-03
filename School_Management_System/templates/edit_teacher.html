@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Teacher</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="main">
+
+    <div class="header">
+        <h1>Edit Teacher</h1>
+        <a href="/teachers">Back to Teachers</a>
+    </div>
+
+    <div class="welcome">
+        <form method="POST">
+
+            <label>Full Name</label><br>
+            <input type="text" name="name"
+                   value="{{ teacher.full_name or '' }}" required>
+            <br><br>
+
+            <label>Phone</label><br>
+            <input type="text" name="phone"
+                   value="{{ teacher.phone or '' }}">
+            <br><br>
+
+            <label>Address</label><br>
+            <input type="text" name="address"
+                   value="{{ teacher.address or '' }}">
+            <br><br>
+
+            <label>Qualification</label><br>
+            <input type="text" name="qualification"
+                   value="{{ teacher.qualification or '' }}" required>
+            <br><br>
+
+            <label>Joining Date</label><br>
+            <input type="date" name="joining_date"
+                   value="{{ teacher.joining_date or '' }}">
+            <br><br>
+
+            <button type="submit">Update Teacher</button>
+
+        </form>
+    </div>
+
+</div>
+
+</body>
+</html>

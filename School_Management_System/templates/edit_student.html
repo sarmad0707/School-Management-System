@@ -1,0 +1,89 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Student</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="main">
+
+    <div class="header">
+        <h1>Edit Student</h1>
+        <a href="/students">Back to Students</a>
+    </div>
+
+    <div class="welcome">
+
+        <form method="POST">
+
+            <label>Full Name</label><br>
+            <input type="text" name="name"
+                   value="{{ student.full_name or '' }}" required>
+            <br><br>
+
+            <label>Phone</label><br>
+            <input type="text" name="phone"
+                   value="{{ student.phone or '' }}">
+            <br><br>
+
+            <label>Address</label><br>
+            <input type="text" name="address"
+                   value="{{ student.address or '' }}">
+            <br><br>
+
+            <label>Admission Number</label><br>
+            <input type="text" name="admission_number"
+                   value="{{ student.admission_number or '' }}">
+            <br><br>
+
+            <label>Date of Birth</label><br>
+            <input type="date" name="dob"
+                   value="{{ student.date_of_birth or '' }}">
+            <br><br>
+
+            <label>Gender</label><br>
+            <select name="gender" required>
+                <option value="Male" {% if student.gender == 'Male' %}selected{% endif %}>Male</option>
+                <option value="Female" {% if student.gender == 'Female' %}selected{% endif %}>Female</option>
+                <option value="Other" {% if student.gender == 'Other' %}selected{% endif %}>Other</option>
+            </select>
+
+            <br><br>
+
+            <label>Class</label><br>
+            <select name="class_id" required>
+                {% for class in classes %}
+                <option value="{{ class.class_id }}"
+                    {% if student.class_id == class.class_id %}selected{% endif %}>
+                    {{ class.class_name }}
+                </option>
+                {% endfor %}
+            </select>
+
+            <br><br>
+
+            <label>Section</label><br>
+            <select name="section_id" required>
+                {% for section in sections %}
+                <option value="{{ section.section_id }}"
+                    {% if student.section_id == section.section_id %}selected{% endif %}>
+                    {{ section.class_name }} - {{ section.section_name }}
+                </option>
+                {% endfor %}
+            </select>
+
+            <br><br>
+
+            <button type="submit">Update Student</button>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Result Card</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f6f9;
+            padding: 25px;
+        }
+        .container {
+            max-width: 850px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+        }
+        h1, h2 { text-align: center; color: #243b55; }
+        .details { margin: 25px 0; line-height: 2; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 12px;
+            text-align: center;
+        }
+        th { background: #2471a3; color: white; }
+        .summary {
+            margin-top: 25px;
+            padding: 15px;
+            background: #eef3f8;
+            line-height: 2;
+        }
+        button, a {
+            display: inline-block;
+            padding: 10px 18px;
+            background: #2471a3;
+            color: white;
+            text-decoration: none;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        @media print {
+            body { background: white; padding: 0; }
+            .container { box-shadow: none; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>School Management System</h1>
+    <h2>Student Result Card</h2>
+
+    <div class="details">
+        <strong>Student Name:</strong> {{ student.full_name }}<br>
+        <strong>Admission Number:</strong> {{ student.admission_number or 'N/A' }}<br>
+        <strong>Class:</strong> {{ student.class_name }}<br>
+        <strong>Examination:</strong> {{ exam.exam_name }}<br>
+        <strong>Result Status:</strong> {{ result_status }}
+    </div>
+
+    <table>
+        <tr>
+            <th>Subject</th>
+            <th>Total Marks</th>
+            <th>Obtained Marks</th>
+            <th>Grade</th>
+        </tr>
+
+        {% for item in results %}
+        <tr>
+            <td>{{ item.subject_name }}</td>
+            <td>{{ item.total_marks }}</td>
+            <td>
+                {% if item.obtained_marks is not none %}
+                    {{ item.obtained_marks }}
+                {% else %}
+                    Not Entered
+                {% endif %}
+            </td>
+            <td>{{ item.grade_name or 'N/A' }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <div class="summary">
+        <strong>Total Marks:</strong> {{ total_marks }}<br>
+        <strong>Obtained Marks:</strong> {{ obtained_total }}<br>
+        <strong>Percentage:</strong> {{ percentage }}%<br>
+        <strong>Overall Grade:</strong> {{ overall_grade }}<br>
+    </div>
+
+    <br>
+
+    <div class="no-print">
+        <button onclick="window.print()">Print Result Card</button>
+        <a href="/exams">Back to Exams</a>
+    </div>
+
+</div>
+
+</body>
+</html>

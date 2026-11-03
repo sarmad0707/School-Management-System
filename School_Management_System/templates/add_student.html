@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add New Student</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="main">
+
+    <div class="header">
+        <h1>Student Registration</h1>
+        <a href="/students">Back to Students</a>
+    </div>
+
+    <div class="welcome">
+
+        <form method="POST">
+
+            <h2>Account Information</h2>
+
+            <label>Username</label><br>
+            <input type="text" name="username" required>
+            <br><br>
+
+            <label>Email</label><br>
+            <input type="email" name="email">
+            <br><br>
+
+            <label>Password</label><br>
+            <input type="password" name="password" required>
+            <br><br>
+
+            <h2>Personal Information</h2>
+
+            <label>Full Name</label><br>
+            <input type="text" name="name" required>
+            <br><br>
+
+            <label>Phone</label><br>
+            <input type="text" name="phone">
+            <br><br>
+
+            <label>Address</label><br>
+            <input type="text" name="address">
+            <br><br>
+
+            <label>Admission Number</label><br>
+            <input type="text" name="admission_number">
+            <br><br>
+
+            <label>Date of Birth</label><br>
+            <input type="date" name="dob">
+            <br><br>
+
+            <label>Gender</label><br>
+            <select name="gender" required>
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <br><br>
+
+            <h2>Academic Information</h2>
+
+            <label>Select Class</label><br>
+            <select name="class_id" required>
+                <option value="">Select Class</option>
+
+                {% for class in classes %}
+                <option value="{{ class.class_id }}">
+                    {{ class.class_name }}
+                </option>
+                {% endfor %}
+
+            </select>
+
+            <br><br>
+
+            <label>Select Section</label><br>
+            <select name="section_id" required>
+                <option value="">Select Section</option>
+
+                {% for section in sections %}
+                <option value="{{ section.section_id }}">
+                    {{ section.class_name }} - {{ section.section_name }}
+                </option>
+                {% endfor %}
+
+            </select>
+
+            <br><br>
+
+            <button type="submit">Register Student</button>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>

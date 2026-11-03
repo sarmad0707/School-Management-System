@@ -1,0 +1,139 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Marks Entry</title>
+    <style>
+        body { font-family: Arial; background: #f4f6f9; padding: 25px; }
+        .container { max-width: 1100px; margin: auto; }
+        .card { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        select, input { padding: 9px; margin: 5px; }
+        button, .link { background: #2471a3; color: white; padding: 10px 15px; border: 0; border-radius: 5px; text-decoration: none; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background: #2471a3; color: white; }
+        .message { background: #d4edda; padding: 10px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <h1>Student Marks Entry</h1>
+    <a class="link" href="/exams">Back to Exams</a>
+    <a class="link" href="/dashboard">Dashboard</a>
+
+    {% with messages = get_flashed_messages() %}
+        {% for message in messages %}
+            <div class="message">{{ message }}</div>
+        {% endfor %}
+    {% endwith %}
+
+    <div class="card">
+        <h2>Select Exam and Class</h2>
+
+        <form method="GET" action="{{ url_for('marks_entry') }}">
+            <label>Exam:</label>
+            <select name="exam_id" required>
+                <option value="">Select Exam</option>
+                {% for exam in exams %}
+                <option value="{{ exam.exam_id }}"
+                    {% if selected_exam == exam.exam_id %}selected{% endif %}>
+                    {{ exam.exam_name }}
+                </option>
+                {% endfor %}
+            </select>
+
+            <label>Class:</label>
+            <select name="class_id" required>
+                <option value="">Select Class</option>
+                {% for class_item in classes %}
+                <option value="{{ class_item.class_id }}"
+                    {% if selected_class == class_item.class_id %}selected{% endif %}>
+                    {{ class_item.class_name }}
+                </option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">Load Subjects</button>
+        </form>
+    </div>
+
+    {% if selected_exam and selected_class %}
+    <div class="card">
+        <h2>Select Subject</h2>
+
+        <form method="GET" action="{{ url_for('marks_entry') }}">
+            <input type="hidden" name="exam_id" value="{{ selected_exam }}">
+            <input type="hidden" name="class_id" value="{{ selected_class }}">
+
+            <select name="exam_subject_id" required>
+                <option value="">Select Subject</option>
+                {% for subject in subjects %}
+                <option value="{{ subject.exam_subject_id }}"
+                    {% if selected_subject == subject.exam_subject_id %}selected{% endif %}>
+                    {{ subject.subject_name }} ({{ subject.total_marks }} Marks)
+                </option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">Load Students</button>
+        </form>
+    </div>
+    {% endif %}
+
+    {% if students %}
+    <div class="card">
+        <h2>Enter Students Marks</h2>
+
+        <form method="POST" action="{{ url_for('marks_entry') }}">
+            <input type="hidden" name="exam_id" value="{{ selected_exam }}">
+            <input type="hidden" name="class_id" value="{{ selected_class }}">
+            <input type="hidden" name="exam_subject_id" value="{{ selected_subject }}">
+
+            <table>
+                <tr>
+                    <th>Student ID</th>
+                    <th>Admission Number</th>
+                    <th>Student Name</th>
+                    <th>Obtained Marks</th>
+                    <th>Result</th>
+                </tr>
+
+                {% for student in students %}
+                <tr>
+                    <td>{{ student.student_id }}</td>
+                    <td>{{ student.admission_number or 'N/A' }}</td>
+                    <td>{{ student.full_name }}</td>
+                    <td>
+                        <input
+                            type="number"
+                            name="marks_{{ student.student_id }}"
+                            value="{{ student.obtained_marks if student.obtained_marks is not none else '' }}"
+                            min="0"
+                            max="100"
+                            step="0.01"
+                            placeholder="Enter marks">
+                    </td>
+                    <td>
+                        <a class="link" target="_blank"
+                           href="{{ url_for('result_card', student_id=student.student_id, exam_id=selected_exam) }}">
+                            View Result
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+
+            <br>
+            <button type="submit">Save Marks</button>
+        </form>
+    </div>
+    {% elif selected_subject %}
+        <div class="card">
+            <p>No active students found in this class.</p>
+        </div>
+    {% endif %}
+
+</div>
+</body>
+</html>

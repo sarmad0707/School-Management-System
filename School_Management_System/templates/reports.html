@@ -1,0 +1,482 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Reports</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 25px;
+            font-family: Arial, sans-serif;
+            background: #f3f5f9;
+            color: #263238;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            margin: 0;
+            color: #1e293b;
+        }
+
+        .back-btn {
+            background: #334155;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #00000010;
+        }
+
+        .card h3 {
+            margin: 0 0 12px;
+            color: #64748b;
+            font-size: 15px;
+        }
+
+        .card h2 {
+            margin: 0;
+            font-size: 27px;
+            color: #2563eb;
+        }
+
+        .section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #00000010;
+        }
+
+        .section h2 {
+            margin-top: 0;
+            color: #1e293b;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 650px;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background: #eff6ff;
+            color: #1e40af;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        .message {
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .action-btn {
+            display: inline-block;
+            color: white;
+            padding: 11px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .pdf-btn {
+            background: #dc3545;
+        }
+
+        .pdf-btn:hover {
+            background: #bb2d3b;
+        }
+
+        .excel-btn {
+            background: #198754;
+        }
+
+        .excel-btn:hover {
+            background: #146c43;
+        }
+
+        .print-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 11px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .print-btn:hover {
+            background: #1d4ed8;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .back-btn, .action-buttons {
+                display: none;
+            }
+
+            .section, .card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                break-inside: avoid;
+            }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+
+            .section {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <div class="header">
+        <h1>School Reports Management</h1>
+
+        <a href="{{ url_for('dashboard') }}" class="back-btn">
+            Back to Dashboard
+        </a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="message">{{ message }}</div>
+        {% endfor %}
+    {% endwith %}
+
+    <!-- PDF, EXCEL AND PRINT BUTTONS -->
+    <div class="action-buttons">
+
+        <a href="{{ url_for('reports.export_pdf') }}"
+           class="action-btn pdf-btn">
+            Download PDF
+        </a>
+
+        <a href="{{ url_for('reports.export_excel') }}"
+           class="action-btn excel-btn">
+            Download Excel
+        </a>
+
+        <button class="print-btn" onclick="window.print()">
+            Print Reports
+        </button>
+
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="summary">
+
+        <div class="card">
+            <h3>Total Students</h3>
+            <h2>{{ total_students }}</h2>
+        </div>
+
+        <div class="card">
+            <h3>Total Teachers</h3>
+            <h2>{{ total_teachers }}</h2>
+        </div>
+
+        <div class="card">
+            <h3>Total Classes</h3>
+            <h2>{{ total_classes }}</h2>
+        </div>
+
+        <div class="card">
+            <h3>Attendance Percentage</h3>
+            <h2>{{ attendance_percentage }}%</h2>
+        </div>
+
+    </div>
+
+    <!-- Student Report -->
+    <div class="section">
+        <h2>1. Student Report</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Admission No.</th>
+                        <th>Student Name</th>
+                        <th>Class</th>
+                        <th>Section</th>
+                        <th>Gender</th>
+                        <th>Date of Birth</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for student in student_report %}
+                    <tr>
+                        <td>{{ student.admission_number or '-' }}</td>
+                        <td>{{ student.student_name or 'Not Available' }}</td>
+                        <td>{{ student.class_name or '-' }}</td>
+                        <td>{{ student.section_name or '-' }}</td>
+                        <td>{{ student.gender or '-' }}</td>
+                        <td>{{ student.date_of_birth or '-' }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6">No student records found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Teacher Report -->
+    <div class="section">
+        <h2>2. Teacher Report</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Teacher Name</th>
+                        <th>Email</th>
+                        <th>Qualification</th>
+                        <th>Joining Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for teacher in teacher_report %}
+                    <tr>
+                        <td>{{ teacher.teacher_name or 'Not Available' }}</td>
+                        <td>{{ teacher.email or '-' }}</td>
+                        <td>{{ teacher.qualification or '-' }}</td>
+                        <td>{{ teacher.joining_date or '-' }}</td>
+                        <td>{{ teacher.status or '-' }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5">No teacher records found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Attendance Report -->
+    <div class="section">
+        <h2>3. Student Attendance Report</h2>
+
+        <p>
+            Total Attendance Records:
+            <strong>{{ total_attendance }}</strong>
+        </p>
+
+        <p>
+            Present Records:
+            <strong>{{ present_count }}</strong>
+        </p>
+
+        <p>
+            Attendance Percentage:
+            <strong>{{ attendance_percentage }}%</strong>
+        </p>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Attendance Type</th>
+                        <th>Total Records</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for item in attendance_report %}
+                    <tr>
+                        <td>{{ item.type_name }}</td>
+                        <td>{{ item.total_records }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="2">No attendance records found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Fee Report -->
+    <div class="section">
+        <h2>4. Fee Collection Report</h2>
+
+        <p>
+            Total Fees:
+            <strong>{{ "%.2f"|format(fee_summary.total_fees or 0) }}</strong>
+        </p>
+
+        <p>
+            Collected Fees:
+            <strong>{{ "%.2f"|format(fee_summary.collected_fees or 0) }}</strong>
+        </p>
+
+        <p>
+            Pending Fees:
+            <strong>{{ "%.2f"|format(fee_summary.pending_fees or 0) }}</strong>
+        </p>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Admission No.</th>
+                        <th>Student</th>
+                        <th>Class</th>
+                        <th>Fee Type</th>
+                        <th>Total Fee</th>
+                        <th>Paid</th>
+                        <th>Pending</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for fee in fee_report %}
+                    <tr>
+                        <td>{{ fee.admission_number or '-' }}</td>
+                        <td>{{ fee.student_name or 'Not Available' }}</td>
+                        <td>{{ fee.class_name or '-' }}</td>
+                        <td>{{ fee.fee_name or '-' }}</td>
+                        <td>{{ "%.2f"|format(fee.total_fee or 0) }}</td>
+                        <td>{{ "%.2f"|format(fee.paid_amount or 0) }}</td>
+                        <td>{{ "%.2f"|format(fee.pending_amount or 0) }}</td>
+                        <td>{{ fee.due_date or '-' }}</td>
+                        <td>{{ fee.status or '-' }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="9">No fee records found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Exam Results Report -->
+    <div class="section">
+        <h2>5. Examination Results Report</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Admission No.</th>
+                        <th>Class</th>
+                        <th>Exam</th>
+                        <th>Subject</th>
+                        <th>Obtained Marks</th>
+                        <th>Total Marks</th>
+                        <th>Grade</th>
+                        <th>Exam Date</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for result in exam_report %}
+                    <tr>
+                        <td>{{ result.student_name or 'Not Available' }}</td>
+                        <td>{{ result.admission_number or '-' }}</td>
+                        <td>{{ result.class_name or '-' }}</td>
+                        <td>{{ result.exam_name }}</td>
+                        <td>{{ result.subject_name }}</td>
+                        <td>{{ result.obtained_marks }}</td>
+                        <td>{{ result.total_marks }}</td>
+                        <td>{{ result.grade_name or '-' }}</td>
+                        <td>{{ result.exam_date or '-' }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="9">No exam results found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

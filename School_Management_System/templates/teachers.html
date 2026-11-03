@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teachers Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="main">
+
+    <div class="header">
+        <div>
+            <h1>Teachers Management</h1>
+            <p>Manage all registered teachers</p>
+        </div>
+        <a href="/dashboard">Dashboard</a>
+    </div>
+
+    <a href="/add_teacher" class="logout">+ Add New Teacher</a>
+
+    <div class="welcome">
+        <h2>All Teachers</h2>
+
+        <table border="1" cellpadding="10" width="100%">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Qualification</th>
+                <th>Joining Date</th>
+                <th>Actions</th>
+            </tr>
+
+            {% for teacher in teachers %}
+            <tr>
+                <td>{{ teacher.teacher_id }}</td>
+                <td>{{ teacher.full_name or '-' }}</td>
+                <td>{{ teacher.email or '-' }}</td>
+                <td>{{ teacher.phone or '-' }}</td>
+                <td>{{ teacher.qualification or '-' }}</td>
+                <td>{{ teacher.joining_date or '-' }}</td>
+                <td>
+                    <a href="{{ url_for('edit_teacher', teacher_id=teacher.teacher_id) }}">
+                        Edit
+                    </a>
+
+                    <form method="POST"
+                          action="{{ url_for('delete_teacher', teacher_id=teacher.teacher_id) }}"
+                          onsubmit="return confirm('Remove this teacher?');">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7">No Teachers Found</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>
